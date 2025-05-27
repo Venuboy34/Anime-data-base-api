@@ -27,22 +27,17 @@ export default {
   },
 };
 
-async function fetchWithUA(url) {
-  return fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:119.0) Gecko/20100101 Firefox/119.0",
-    },
-  });
-}
-
 async function scrapeAnitaku(query) {
   const [titlePart, episodePart] = query.split("/episode");
   const episode = episodePart ? episodePart.trim() : "";
   const title = titlePart.trim().replace(/\s+/g, " ");
 
   const searchUrl = `https://anitaku.io/search.html?keyword=${encodeURIComponent(title)}`;
-  const res = await fetchWithUA(searchUrl);
+  const res = await fetch(searchUrl, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:117.0) Gecko/20100101 Firefox/117.0",
+    },
+  });
   const html = await res.text();
 
   const regex = new RegExp(`<a href="(/anime/[^"]+)"[^>]*title="([^"]+)"`, "gi");
@@ -54,11 +49,15 @@ async function scrapeAnitaku(query) {
       const animePage = `https://anitaku.io${link}`;
       const episodePage = `${animePage.replace(".html", "")}-episode-${episode}.html`;
 
-      const epRes = await fetchWithUA(episodePage);
+      const epRes = await fetch(episodePage, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:117.0) Gecko/20100101 Firefox/117.0",
+        },
+      });
       const epHtml = await epRes.text();
 
-      const m3u8Match = epHtml.match(/file:\s*["'](https?:\/\/[^"']+\.m3u8)["']/);
-      const thumbMatch = epHtml.match(/poster:\s*["'](https?:\/\/[^"']+)["']/);
+      const m3u8Match = epHtml.match(/file: ["'](https?:\/\/[^"']+\.m3u8)["']/);
+      const thumbMatch = epHtml.match(/poster: ["'](https?:\/\/[^"']+)["']/);
 
       if (m3u8Match) {
         return {
