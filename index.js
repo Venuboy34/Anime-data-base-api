@@ -11,7 +11,7 @@ export default {
       }), { headers: { "Content-Type": "application/json" }, status: 400 });
     }
 
-    const searchUrl = `https://anitaku.to/search.html?keyword=${encodeURIComponent(query)}`;
+    const searchUrl = `https://anitaku.io/search.html?keyword=${encodeURIComponent(query)}`;
     const searchRes = await fetch(searchUrl);
     const searchHtml = await searchRes.text();
 
@@ -19,12 +19,12 @@ export default {
     if (!animeMatch) {
       return new Response(JSON.stringify({
         status: "error",
-        message: "Anime not found on anitaku.to"
+        message: "Anime not found on anitaku.io"
       }), { headers: { "Content-Type": "application/json" }, status: 404 });
     }
 
     const slug = animeMatch[1];
-    const animeUrl = `https://anitaku.to/category/${slug}`;
+    const animeUrl = `https://anitaku.io/category/${slug}`;
     const animePage = await fetch(animeUrl).then(res => res.text());
     const episodesJson = animePage.match(/var episodes = (.*?);/);
 
@@ -40,8 +40,8 @@ export default {
     const data = episodes.map(ep => ({
       title: `Episode ${ep.episode}`,
       number: ep.episode,
-      stream_url: `https://anitaku.to/watch/${slug}-episode-${ep.episode}`,
-      download_url: `https://anitaku.to/download/${slug}-episode-${ep.episode}`
+      stream_url: `https://anitaku.io/watch/${slug}-episode-${ep.episode}`,
+      download_url: `https://anitaku.io/download/${slug}-episode-${ep.episode}`
     }));
 
     return new Response(JSON.stringify({
