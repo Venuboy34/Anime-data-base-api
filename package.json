@@ -1,6 +1,12 @@
 {
-  "name": "Anime-data-base-api",
+  "name": "anitaku-anime-api",
   "version": "1.0.0",
-  "type": "module",
-  "main": "index.js"
+  "main": "src/index.js",
+  "scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler publish"
+  },
+  "devDependencies": {
+    "wrangler": "^3.57.0"
+  }
 }
